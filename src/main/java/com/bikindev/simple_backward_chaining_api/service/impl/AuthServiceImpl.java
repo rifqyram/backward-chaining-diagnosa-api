@@ -52,20 +52,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse register(AuthRequest request) {
-        try {
-            validationService.validate(request);
-            UserCredential userCredential = UserCredential.builder()
-                    .username(request.getUsername())
-                    .password(bcryptUtil.hashPassword(request.getPassword()))
-                    .role(Role.ROLE_USER).build();
-            userRepository.saveAndFlush(userCredential);
-            return UserResponse.builder()
-                    .username(userCredential.getUsername())
-                    .role(userCredential.getRole().getName())
-                    .build();
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User sudah terdaftar");
-        }
+        validationService.validate(request);
+        UserCredential userCredential = UserCredential.builder()
+                .username(request.getUsername())
+                .password(bcryptUtil.hashPassword(request.getPassword()))
+                .role(Role.ROLE_USER).build();
+        userRepository.saveAndFlush(userCredential);
+        return UserResponse.builder()
+                .username(userCredential.getUsername())
+                .role(userCredential.getRole().getName())
+                .build();
     }
 
     @Override

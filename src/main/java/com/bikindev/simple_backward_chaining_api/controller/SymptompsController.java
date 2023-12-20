@@ -2,8 +2,8 @@ package com.bikindev.simple_backward_chaining_api.controller;
 
 
 import com.bikindev.simple_backward_chaining_api.dto.CommonResponse;
-import com.bikindev.simple_backward_chaining_api.entity.Indication;
-import com.bikindev.simple_backward_chaining_api.service.IndicationService;
+import com.bikindev.simple_backward_chaining_api.entity.Symptoms;
+import com.bikindev.simple_backward_chaining_api.service.SymptomsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,19 +15,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/indications")
 @RequiredArgsConstructor
-public class IndicationController {
-    private final IndicationService indicationService;
+public class SymptompsController {
+    private final SymptomsService symptomsService;
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> createIndication(@RequestBody Indication indication) {
-        Indication newIndication = indicationService.createOrUpdate(indication);
-        CommonResponse<Indication> response = CommonResponse.<Indication>builder()
+    public ResponseEntity<?> createSymptoms(@RequestBody Symptoms symptoms) {
+        Symptoms newSymptoms = symptomsService.createOrUpdate(symptoms);
+        CommonResponse<Symptoms> response = CommonResponse.<Symptoms>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message("Sukses membuat data gejala")
-                .data(newIndication)
+                .data(newSymptoms)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
@@ -37,12 +37,12 @@ public class IndicationController {
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> getIndicationById(@PathVariable String id) {
-        Indication indication = indicationService.getById(id);
-        CommonResponse<Indication> response = CommonResponse.<Indication>builder()
+    public ResponseEntity<?> getSymptomsById(@PathVariable String id) {
+        Symptoms symptoms = symptomsService.getById(id);
+        CommonResponse<Symptoms> response = CommonResponse.<Symptoms>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Sukses mengambil data gejala")
-                .data(indication)
+                .data(symptoms)
                 .build();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
@@ -51,12 +51,12 @@ public class IndicationController {
     @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> getIndications() {
-        List<Indication> indications = indicationService.getAll();
-        CommonResponse<List<Indication>> response = CommonResponse.<List<Indication>>builder()
+    public ResponseEntity<?> getSymptoms() {
+        List<Symptoms> symptomps = symptomsService.getAll();
+        CommonResponse<List<Symptoms>> response = CommonResponse.<List<Symptoms>>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Sukses mengambil data gejala")
-                .data(indications)
+                .data(symptomps)
                 .build();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
@@ -66,12 +66,13 @@ public class IndicationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> updateIndication(@RequestBody Indication aIndication) {
-        Indication newIndication = indicationService.createOrUpdate(aIndication);
-        CommonResponse<Indication> response = CommonResponse.<Indication>builder()
+    public ResponseEntity<?> updateSymptoms
+            (@RequestBody Symptoms aSymptoms) {
+        Symptoms newSymptoms = symptomsService.createOrUpdate(aSymptoms);
+        CommonResponse<Symptoms> response = CommonResponse.<Symptoms>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Sukses merubah data gejala")
-                .data(newIndication)
+                .data(newSymptoms)
                 .build();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
@@ -81,8 +82,8 @@ public class IndicationController {
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> deleteIndicationById(@PathVariable String id) {
-        indicationService.deleteById(id);
+    public ResponseEntity<?> deleteSymptomsById(@PathVariable String id) {
+        symptomsService.deleteById(id);
         CommonResponse<String> response = CommonResponse.<String>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Sukses menghapus data gejala")

@@ -1,16 +1,15 @@
 package com.bikindev.simple_backward_chaining_api.service.impl;
 
 import com.bikindev.simple_backward_chaining_api.dto.RuleRequest;
-import com.bikindev.simple_backward_chaining_api.entity.Case;
-import com.bikindev.simple_backward_chaining_api.entity.Indication;
+import com.bikindev.simple_backward_chaining_api.entity.Disease;
+import com.bikindev.simple_backward_chaining_api.entity.Symptoms;
 import com.bikindev.simple_backward_chaining_api.entity.Rule;
 import com.bikindev.simple_backward_chaining_api.repository.RuleRepository;
 import com.bikindev.simple_backward_chaining_api.service.CaseService;
-import com.bikindev.simple_backward_chaining_api.service.IndicationService;
+import com.bikindev.simple_backward_chaining_api.service.SymptomsService;
 import com.bikindev.simple_backward_chaining_api.service.RuleService;
 import com.bikindev.simple_backward_chaining_api.service.ValidationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,41 +22,37 @@ import java.util.List;
 public class RuleServiceImpl implements RuleService {
     private final RuleRepository ruleRepository;
     private final ValidationService validationService;
-    private final IndicationService indicationService;
+    private final SymptomsService symptomsService;
     private final CaseService caseService;
 
     @Override
     public Rule createOrUpdate(RuleRequest request) {
-        try {
-            validationService.validate(request);
-            Case aCase = caseService.getById(request.getCaseId());
+        validationService.validate(request);
+        Disease aDisease = caseService.getById(request.getDiseaseId());
 
-            List<Indication> requiredIndications = new ArrayList<>();
-            List<Indication> optionalIndications = new ArrayList<>();
-            if (request.getRequireIndicationIds() != null && !request.getRequireIndicationIds().isEmpty()) {
-                for (String id : request.getRequireIndicationIds()) {
-                    Indication indication = indicationService.getById(id);
-                    requiredIndications.add(indication);
-                }
+        List<Symptoms> requiredSymptomps = new ArrayList<>();
+        List<Symptoms> optionalSymptomps = new ArrayList<>();
+        if (request.getRequiredSymptomsIds() != null && !request.getRequiredSymptomsIds().isEmpty()) {
+            for (String id : request.getRequiredSymptomsIds()) {
+                Symptoms symptoms = symptomsService.getById(id);
+                requiredSymptomps.add(symptoms);
             }
-
-            if (request.getOptionalIndicationIds() != null && !request.getOptionalIndicationIds().isEmpty()) {
-                for (String id : request.getOptionalIndicationIds()) {
-                    Indication indication = indicationService.getById(id);
-                    optionalIndications.add(indication);
-                }
-            }
-
-            Rule rule = Rule.builder()
-                    .id(request.getId())
-                    .aCase(aCase)
-                    .requiredIndication(requiredIndications)
-                    .optionalIndication(optionalIndications)
-                    .build();
-            return ruleRepository.saveAndFlush(rule);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
+
+        if (request.getOptionalSymptomsIds() != null && !request.getOptionalSymptomsIds().isEmpty()) {
+            for (String id : request.getOptionalSymptomsIds()) {
+                Symptoms symptoms = symptomsService.getById(id);
+                optionalSymptomps.add(symptoms);
+            }
+        }
+
+        Rule rule = Rule.builder()
+                .id(request.getId())
+                .disease(aDisease)
+                .requiredSymptoms(requiredSymptomps)
+                .optionalSymptoms(optionalSymptomps)
+                .build();
+        return ruleRepository.saveAndFlush(rule);
     }
 
     @Override
@@ -71,7 +66,7 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public List<Rule> getRulesForDiagnosis(Case targetDiagnosis) {
+    public List<Rule> getRulesForDiagnosis(Disease targetDiagnosis) {
         return ruleRepository.findAllByaCase(targetDiagnosis);
     }
 

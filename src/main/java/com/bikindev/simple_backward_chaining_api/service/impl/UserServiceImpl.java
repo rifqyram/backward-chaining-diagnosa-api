@@ -1,5 +1,6 @@
 package com.bikindev.simple_backward_chaining_api.service.impl;
 
+import com.bikindev.simple_backward_chaining_api.dto.UserResponse;
 import com.bikindev.simple_backward_chaining_api.entity.UserCredential;
 import com.bikindev.simple_backward_chaining_api.repository.UserRepository;
 import com.bikindev.simple_backward_chaining_api.service.UserService;
@@ -26,6 +27,15 @@ public class UserServiceImpl implements UserService {
             return Optional.of((UserCredential) authentication.getPrincipal());
         }
         return Optional.empty();
+    }
+
+    @Override
+    public UserResponse getCurrentUserResponse() {
+        UserCredential currentUser = getCurrentUser().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+        return UserResponse.builder()
+                .username(currentUser.getUsername())
+                .role(currentUser.getRole().getName())
+                .build();
     }
 
     @Override

@@ -13,8 +13,11 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "m_case")
-public class Case extends BaseEntity {
+@Table(name = "m_disease")
+public class Disease extends BaseEntity {
+    @NotBlank(message = "Kode Penyakit tidak boleh kosong")
+    @Column(unique = true, nullable = false)
+    private String diseaseCode;
     @NotBlank(message = "Nama Penyakit tidak boleh kosong")
     @Column(unique = true, nullable = false)
     private String name;

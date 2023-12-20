@@ -1,12 +1,12 @@
 package com.bikindev.simple_backward_chaining_api.service;
 
-import com.bikindev.simple_backward_chaining_api.entity.Case;
+import com.bikindev.simple_backward_chaining_api.entity.Disease;
 
 import java.util.List;
 
 public interface CaseService {
-    Case createOrUpdate(Case aCase);
-    Case getById(String id);
-    List<Case> getAll();
+    Disease createOrUpdate(Disease aDisease);
+    Disease getById(String id);
+    List<Disease> getAll();
     void deleteById(String id);
 }

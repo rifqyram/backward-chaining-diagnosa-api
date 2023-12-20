@@ -15,7 +15,7 @@ import java.util.List;
 public class RuleRequest {
     private String id;
     @NotBlank(message = "Id Penyakit tidak boleh kosong")
-    private String caseId;
-    private List<String> requireIndicationIds;
-    private List<String> optionalIndicationIds;
+    private String diseaseId;
+    private List<String> requiredSymptomsIds;
+    private List<String> optionalSymptomsIds;
 }

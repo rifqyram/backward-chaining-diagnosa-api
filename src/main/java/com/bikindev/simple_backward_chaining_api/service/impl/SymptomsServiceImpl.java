@@ -1,11 +1,10 @@
 package com.bikindev.simple_backward_chaining_api.service.impl;
 
-import com.bikindev.simple_backward_chaining_api.entity.Indication;
+import com.bikindev.simple_backward_chaining_api.entity.Symptoms;
 import com.bikindev.simple_backward_chaining_api.repository.IndicationRepository;
-import com.bikindev.simple_backward_chaining_api.service.IndicationService;
+import com.bikindev.simple_backward_chaining_api.service.SymptomsService;
 import com.bikindev.simple_backward_chaining_api.service.ValidationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,33 +13,29 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class IndicationServiceImpl implements IndicationService {
+public class SymptomsServiceImpl implements SymptomsService {
     private final IndicationRepository indicationRepository;
     private final ValidationService validationService;
 
     @Override
-    public Indication createOrUpdate(Indication indication) {
-        try {
-            validationService.validate(indication);
-            return indicationRepository.saveAndFlush(indication);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
+    public Symptoms createOrUpdate(Symptoms symptoms) {
+        validationService.validate(symptoms);
+        return indicationRepository.saveAndFlush(symptoms);
     }
 
     @Override
-    public Indication getById(String id) {
+    public Symptoms getById(String id) {
         return indicationRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Gejala tidak ditemukan"));
     }
 
     @Override
-    public List<Indication> getAll() {
+    public List<Symptoms> getAll() {
         return indicationRepository.findAll();
     }
 
     @Override
     public void deleteById(String id) {
-        Indication aIndication = getById(id);
-        indicationRepository.delete(aIndication);
+        Symptoms aSymptoms = getById(id);
+        indicationRepository.delete(aSymptoms);
     }
 }

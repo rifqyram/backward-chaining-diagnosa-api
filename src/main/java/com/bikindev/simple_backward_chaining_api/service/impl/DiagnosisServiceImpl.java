@@ -22,7 +22,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     private final ValidationService validationService;
     private final RuleService ruleService;
     private final CaseService caseService;
-    private final IndicationService indicationService;
+    private final SymptomsService symptomsService;
     private final UserService userService;
 
     @Transactional(rollbackFor = Exception.class)
@@ -31,17 +31,17 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         validationService.validate(request);
         UserCredential currentUser = userService.getCurrentUser()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
-        Case targetCase = caseService.getById(request.getCaseId());
-        List<Indication> indications = request.getIndicationsIds().stream()
-                .map(indicationService::getById)
+        Disease targetDisease = caseService.getById(request.getCaseId());
+        List<Symptoms> symptomps = request.getIndicationsIds().stream()
+                .map(symptomsService::getById)
                 .collect(Collectors.toList());
 
-        List<Rule> rules = ruleService.getRulesForDiagnosis(targetCase);
+        List<Rule> rules = ruleService.getRulesForDiagnosis(targetDisease);
         int totalRules = rules.size();
         int matchedRules = 0;
 
         for (Rule rule : rules) {
-            if (isRuleFulfilled(rule, indications)) {
+            if (isRuleFulfilled(rule, symptomps)) {
                 matchedRules++;
             }
         }
@@ -50,10 +50,10 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
         Diagnosis diagnosis = Diagnosis.builder()
                 .userCredential(currentUser)
-                .aCase(targetCase)
+                .disease(targetDisease)
                 .percentage(matchPercentage)
                 .diagnoseAt(new Date())
-                .indications(indications)
+                .symptomps(symptomps)
                 .build();
 
         diagnosisRepository.saveAndFlush(diagnosis);
@@ -90,22 +90,22 @@ public class DiagnosisServiceImpl implements DiagnosisService {
                         .username(diagnosis.getUserCredential().getUsername())
                         .role(diagnosis.getUserCredential().getRole().getName())
                         .build())
-                .aCase(diagnosis.getACase())
+                .disease(diagnosis.getDisease())
                 .percentage(diagnosis.getPercentage())
-                .indications(diagnosis.getIndications())
+                .symptomps(diagnosis.getSymptomps())
                 .diagnoseAt(diagnosis.getDiagnoseAt())
                 .build();
     }
 
-    private boolean isRuleFulfilled(Rule rule, List<Indication> indications) {
-        if (rule.getRequiredIndication().isEmpty() || new HashSet<>(indications).containsAll(rule.getRequiredIndication())) {
+    private boolean isRuleFulfilled(Rule rule, List<Symptoms> symptompList) {
+        if (rule.getRequiredSymptoms().isEmpty() || new HashSet<>(symptompList).containsAll(rule.getRequiredSymptoms())) {
             return true;
         }
 
         boolean optionalIndication = false;
-        if (!rule.getOptionalIndication().isEmpty()) {
-            for (Indication indication : rule.getOptionalIndication()) {
-                if (indications.contains(indication)) {
+        if (!rule.getOptionalSymptoms().isEmpty()) {
+            for (Symptoms symptoms : rule.getOptionalSymptoms()) {
+                if (symptompList.contains(symptoms)) {
                     optionalIndication = true;
                     break;
                 }

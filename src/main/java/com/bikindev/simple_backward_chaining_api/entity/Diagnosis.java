@@ -20,10 +20,10 @@ import java.util.List;
 public class Diagnosis extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "case_id")
-    private Case aCase;
+    private Disease disease;
     private Double percentage;
     @ManyToMany
-    private List<Indication> indications;
+    private List<Symptoms> symptomps;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserCredential userCredential;

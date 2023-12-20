@@ -19,14 +19,13 @@ import java.util.List;
 @Table(name = "m_rule")
 public class Rule extends BaseEntity {
     @ManyToOne
-    @JoinColumn(name = "case_id", nullable = false)
-    @JsonProperty("case")
-    private Case aCase;
+    @JoinColumn(name = "disease_id", nullable = false)
+    private Disease disease;
 
-    @ManyToMany
-    private List<Indication> requiredIndication;
+    @ManyToMany(cascade = CascadeType.MERGE)
+    private List<Symptoms> requiredSymptoms;
 
-    @ManyToMany
-    private List<Indication> optionalIndication;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Symptoms> optionalSymptoms;
 
 }

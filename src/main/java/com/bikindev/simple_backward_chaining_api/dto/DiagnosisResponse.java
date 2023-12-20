@@ -1,7 +1,7 @@
 package com.bikindev.simple_backward_chaining_api.dto;
 
-import com.bikindev.simple_backward_chaining_api.entity.Case;
-import com.bikindev.simple_backward_chaining_api.entity.Indication;
+import com.bikindev.simple_backward_chaining_api.entity.Disease;
+import com.bikindev.simple_backward_chaining_api.entity.Symptoms;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,13 +18,8 @@ import java.util.List;
 public class DiagnosisResponse {
     private String id;
     private UserResponse user;
-    private List<Indication> indications;
-    private Case aCase;
+    private List<Symptoms> symptomps;
+    private Disease disease;
     private Double percentage;
     private Date diagnoseAt;
-
-    @JsonProperty("case")
-    public Case getaCase() {
-        return aCase;
-    }
 }
